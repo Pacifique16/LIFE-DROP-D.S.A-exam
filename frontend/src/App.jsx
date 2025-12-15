@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import heroImage from './assets/Hero-home-group.png'
 import backgroundImage from './assets/background.png'
 import shapeImage from './assets/about-1-shape-2.png'
@@ -43,6 +43,10 @@ function App() {
     email: '',
     country: 'Rwanda'
   })
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
 
   const renderPage = () => {
     switch(currentPage) {
@@ -100,14 +104,14 @@ function App() {
           alignItems: 'center', 
           justifyContent: 'space-between' 
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => { setCurrentPage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             <div style={{ color: 'white', fontSize: '32px', fontWeight: 'bold' }}>
               LIFE DROP
             </div>
             <img src={bloodDropIcon} alt="Blood Drop" style={{ width: '32px', height: '32px', filter: 'brightness(0) saturate(100%) invert(100%)' }} />
           </div>
           <nav style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
-            <button onClick={() => setCurrentPage('home')} style={{ 
+            <button onClick={() => { setCurrentPage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ 
               background: 'none', 
               border: 'none', 
               color: 'white', 
@@ -115,7 +119,7 @@ function App() {
               fontSize: '16px',
               fontWeight: '600'
             }}>HOME</button>
-            <button onClick={() => setCurrentPage('about')} style={{ 
+            <button onClick={() => { setCurrentPage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ 
               background: 'none', 
               border: 'none', 
               color: 'white', 
@@ -123,7 +127,7 @@ function App() {
               fontSize: '16px',
               fontWeight: '600'
             }}>ABOUT US</button>
-            <button onClick={() => setCurrentPage('impact')} style={{ 
+            <button onClick={() => { setCurrentPage('impact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ 
               background: 'none', 
               border: 'none', 
               color: 'white', 
@@ -291,7 +295,7 @@ function HomePage({ setCurrentPage }) {
                 marginBottom: '32px',
                 lineHeight: '1.6'
               }}>
-                Save lives by helping the world's poorest countries collect sufficient, safe blood.
+                Save lives by helping East African hospitals collect sufficient, safe blood.
               </p>
               <button 
                 onClick={() => setCurrentPage('donate')}
@@ -366,7 +370,7 @@ function HomePage({ setCurrentPage }) {
                 marginBottom: '32px',
                 lineHeight: '1.6'
               }}>
-                In many low-income countries, hospitals face critical shortages of safe blood. Patients—especially women in childbirth, children with severe anemia, and accident victims—suffer and sometimes die due to the lack of an adequate blood supply. Meanwhile, wealthier nations enjoy a stable, safe blood supply that is readily available.
+                Across East Africa, hospitals face critical shortages of safe blood. Patients—especially women in childbirth, children with severe anemia, and accident victims—suffer and sometimes die due to the lack of an adequate blood supply. Our platform connects donors with hospitals to ensure life-saving blood reaches those who need it most.
               </p>
               
               <div style={{ marginBottom: '24px' }}>
@@ -377,7 +381,7 @@ function HomePage({ setCurrentPage }) {
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <img src={heartIcon} alt="Heart" style={{ width: '24px', height: '24px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
-                  <span style={{ fontSize: '16px', color: '#666' }}>Over 50% of people in low-income countries do not have access to safe blood transfusions.</span>
+                  <span style={{ fontSize: '16px', color: '#666' }}>Many East African communities lack reliable access to safe blood transfusions.</span>
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
@@ -489,8 +493,8 @@ function HomePage({ setCurrentPage }) {
                     <img src={loveIcon} alt="Love" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE DONATE</h3>
-                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Providing funding, equipment, and expertise to low-income countries.</p>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE CONNECT</h3>
+                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Linking donors directly with hospitals needing blood across East Africa.</p>
                   </div>
                 </div>
               </div>
@@ -507,8 +511,8 @@ function HomePage({ setCurrentPage }) {
                     <img src={userGroupIcon} alt="User Group" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE ENCOURAGE</h3>
-                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>The blood banking community to share resources.</p>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE FACILITATE</h3>
+                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Streamlining blood requests and donation scheduling for faster response.</p>
                   </div>
                 </div>
               </div>
@@ -525,8 +529,8 @@ function HomePage({ setCurrentPage }) {
                     <img src={dealIcon} alt="Deal" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE ADVOCATE</h3>
-                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Promoting voluntary, unpaid blood donation globally.</p>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE VERIFY</h3>
+                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Ensuring safe, screened blood through our trusted network of certified centers.</p>
                   </div>
                 </div>
               </div>
@@ -543,8 +547,8 @@ function HomePage({ setCurrentPage }) {
                     <img src={volumeIcon} alt="Volume" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE INFORM</h3>
-                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Raising awareness about blood shortages and transfusion safety issues.</p>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE NOTIFY</h3>
+                    <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Real-time alerts for urgent blood needs and donation opportunities.</p>
                   </div>
                 </div>
               </div>
@@ -562,7 +566,7 @@ function HomePage({ setCurrentPage }) {
             color: '#701C45',
             marginBottom: '32px'
           }}>
-            A LEGACY OF LIFE-SAVING WORK
+            CONNECTING LIVES ACROSS EAST AFRICA
           </h2>
           <p style={{ 
             fontSize: '16px', 
@@ -571,7 +575,7 @@ function HomePage({ setCurrentPage }) {
             margin: '0 auto 60px',
             lineHeight: '1.6'
           }}>
-            Since 2008, LIFE DROP has worked to ensure that no patient is left without access to safe blood. By delivering essential medical supplies and funding life-saving programs, we empower hospitals and blood banks in under-resourced regions to improve transfusion safety. Our efforts have included providing <strong>2,000+ blood mixers/scales</strong> to enhance testing accuracy and supplying nearly <strong>20 mobile donation vehicles</strong> to reach remote communities.
+            LIFE DROP is revolutionizing blood donation in East Africa by connecting hospitals directly with willing donors. Our digital platform ensures that no patient is left without access to safe blood by streamlining the donation process and creating a reliable network of verified donors and certified medical facilities across Rwanda, Kenya, Uganda, and Tanzania. Our network includes <strong>500+ registered hospitals</strong> and <strong>10,000+ verified donors</strong> with <strong>real-time matching</strong> capabilities.
           </p>
           
           {/* Partners Slider */}
@@ -633,14 +637,14 @@ function HomePage({ setCurrentPage }) {
             color: '#701C45',
             marginBottom: '24px'
           }}>
-            BE A VOICE TO FUND OUR MISSION
+            JOIN OUR NETWORK
           </h2>
           <p style={{ 
             fontSize: '18px', 
             color: '#666', 
             marginBottom: '60px'
           }}>
-            Help LIFE DROP save communities in crisis. Make your tax-deductible gift today.
+            Connect with LIFE DROP to save lives across East Africa through our digital platform.
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
@@ -654,9 +658,9 @@ function HomePage({ setCurrentPage }) {
               <div style={{ fontSize: '48px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
                 <img src={dealIcon} alt="Deal" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(100%)' }} />
               </div>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>CORPORATE GIVING</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>HOSPITALS</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
-                Help LIFE DROP save communities in crisis. Make your tax-deductible gift today or match 1:1 donations when your employees give.
+                Register your facility to post blood requests and connect with verified donors in your area.
               </p>
               <button style={{ 
                 background: 'white',
@@ -668,7 +672,7 @@ function HomePage({ setCurrentPage }) {
                 fontWeight: 'bold',
                 cursor: 'pointer'
               }}>
-                Give Today
+                Register Hospital
               </button>
             </div>
             
@@ -682,9 +686,9 @@ function HomePage({ setCurrentPage }) {
               <div style={{ fontSize: '48px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
                 <img src={prayIcon} alt="Pray" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(100%)' }} />
               </div>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>OPEN ARMS</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>DONORS</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
-                Open Arms partners encourage their donors to "give twice" by forgoing their donor gift for a financial donation on the donor's behalf to LIFE DROP.
+                Sign up to receive notifications about blood needs and schedule donations at nearby centers.
               </p>
               <button style={{ 
                 background: 'white',
@@ -696,7 +700,7 @@ function HomePage({ setCurrentPage }) {
                 fontWeight: 'bold',
                 cursor: 'pointer'
               }}>
-                Sign Up
+                Become a Donor
               </button>
             </div>
             
@@ -712,9 +716,9 @@ function HomePage({ setCurrentPage }) {
                   <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
                 </svg>
               </div>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>DONATE EQUIPMENT</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>PARTNERS</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
-                Consider donating no-longer-needed equipment or supplies for rehoming to a low-income country.
+                Healthcare organizations can integrate with our API to expand blood donation networks.
               </p>
               <button style={{ 
                 background: 'white',
@@ -726,7 +730,7 @@ function HomePage({ setCurrentPage }) {
                 fontWeight: 'bold',
                 cursor: 'pointer'
               }}>
-                Visit EQxchange
+                Partner With Us
               </button>
             </div>
           </div>
