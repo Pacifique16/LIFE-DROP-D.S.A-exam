@@ -8,6 +8,13 @@ import medicalSceneImage from './assets/doctor.jpg'
 import smilingChildImage from './assets/work-pledge.png'
 import nurseImage from './assets/impact-led.png'
 import schoolChildrenImage from './assets/smiling.jpg'
+import loveIcon from './assets/love.png'
+import userGroupIcon from './assets/user-group.png'
+import dealIcon from './assets/deal.png'
+import volumeIcon from './assets/volume.png'
+import clockIcon from './assets/clock.png'
+import heartIcon from './assets/heart.png'
+import userIcon from './assets/user.png'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -123,7 +130,12 @@ function App() {
             <div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px' }}>CONTACT INFORMATION</h4>
               <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                <p>📧 Info@lifedrop.org</p>
+                <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                  Info@lifedrop.org
+                </p>
                 <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
                   <div style={{ width: '30px', height: '30px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%' }}></div>
                   <div style={{ width: '30px', height: '30px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%' }}></div>
@@ -254,23 +266,17 @@ function HomePage({ setCurrentPage }) {
               
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid #701C45', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#701C45' }}></div>
-                  </div>
+                  <img src={clockIcon} alt="Clock" style={{ width: '24px', height: '24px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   <span style={{ fontSize: '16px', color: '#666' }}>Every 2 seconds, someone needs blood.</span>
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid #701C45', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#701C45' }}></div>
-                  </div>
+                  <img src={heartIcon} alt="Heart" style={{ width: '24px', height: '24px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   <span style={{ fontSize: '16px', color: '#666' }}>Over 50% of people in low-income countries do not have access to safe blood transfusions.</span>
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid #701C45', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#701C45' }}></div>
-                  </div>
+                  <img src={userIcon} alt="User" style={{ width: '24px', height: '24px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
                   <span style={{ fontSize: '16px', color: '#666' }}>1 donation can save up to 3 lives.</span>
                 </div>
               </div>
@@ -371,14 +377,12 @@ function HomePage({ setCurrentPage }) {
                   <div style={{ 
                     width: '48px', 
                     height: '48px', 
-                    background: '#701C45', 
-                    borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px'
-                  }}>❤️</div>
+                    justifyContent: 'center'
+                  }}>
+                    <img src={loveIcon} alt="Love" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
+                  </div>
                   <div>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE DONATE</h3>
                     <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Providing funding, equipment, and expertise to low-income countries.</p>
@@ -391,14 +395,12 @@ function HomePage({ setCurrentPage }) {
                   <div style={{ 
                     width: '48px', 
                     height: '48px', 
-                    background: '#701C45', 
-                    borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px'
-                  }}>👥</div>
+                    justifyContent: 'center'
+                  }}>
+                    <img src={userGroupIcon} alt="User Group" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
+                  </div>
                   <div>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE ENCOURAGE</h3>
                     <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>The blood banking community to share resources.</p>
@@ -411,14 +413,12 @@ function HomePage({ setCurrentPage }) {
                   <div style={{ 
                     width: '48px', 
                     height: '48px', 
-                    background: '#701C45', 
-                    borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px'
-                  }}>📢</div>
+                    justifyContent: 'center'
+                  }}>
+                    <img src={dealIcon} alt="Deal" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
+                  </div>
                   <div>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE ADVOCATE</h3>
                     <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Promoting voluntary, unpaid blood donation globally.</p>
@@ -431,14 +431,12 @@ function HomePage({ setCurrentPage }) {
                   <div style={{ 
                     width: '48px', 
                     height: '48px', 
-                    background: '#701C45', 
-                    borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px'
-                  }}>💡</div>
+                    justifyContent: 'center'
+                  }}>
+                    <img src={volumeIcon} alt="Volume" style={{ width: '48px', height: '48px', filter: 'brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(1654%) hue-rotate(315deg) brightness(91%) contrast(95%)' }} />
+                  </div>
                   <div>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', margin: 0 }}>WE INFORM</h3>
                     <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0' }}>Raising awareness about blood shortages and transfusion safety issues.</p>
@@ -502,7 +500,11 @@ function HomePage({ setCurrentPage }) {
               borderRadius: '12px',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '20px' }}>🤝</div>
+              <div style={{ fontSize: '48px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11 14H9c0-4.97 4.03-9 9-9v2c-3.87 0-7 3.13-7 7zm7-3V9.5c0-.42-.17-.8-.44-1.06L15 6h-2c-1.1 0-2 .9-2 2v4.5l-8 2V20c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-5.5l-2-.5z"/>
+                </svg>
+              </div>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>CORPORATE GIVING</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Help LIFE DROP save communities in crisis. Make your tax-deductible gift today or match 1:1 donations when your employees give.
@@ -528,7 +530,11 @@ function HomePage({ setCurrentPage }) {
               borderRadius: '12px',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '20px' }}>🙌</div>
+              <div style={{ fontSize: '48px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.12.23-2.18.65-3.15L12 15.5l7.35-6.65c.42.97.65 2.03.65 3.15 0 4.41-3.59 8-8 8z"/>
+                </svg>
+              </div>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>OPEN ARMS</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Open Arms partners encourage their donors to "give twice" by forgoing their donor gift for a financial donation on the donor's behalf to LIFE DROP.
@@ -554,7 +560,11 @@ function HomePage({ setCurrentPage }) {
               borderRadius: '12px',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '20px' }}>💰</div>
+              <div style={{ fontSize: '48px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                </svg>
+              </div>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>DONATE EQUIPMENT</h3>
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Consider donating no-longer-needed equipment or supplies for rehoming to a low-income country.
