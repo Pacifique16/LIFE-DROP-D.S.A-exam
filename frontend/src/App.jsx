@@ -1388,7 +1388,7 @@ function AboutPage() {
                 marginBottom: '32px',
                 lineHeight: '1.6'
               }}>
-                Our aim is simple; to save lives by improving the availability and safety of blood in some of the world's poorest nations.
+                Our aim is simple; to save lives by improving the availability and safety of blood across East Africa through our digital platform that connects hospitals with verified donors.
               </p>
               <button style={{ 
                 background: '#701C45',
@@ -1400,7 +1400,7 @@ function AboutPage() {
                 fontWeight: 'bold',
                 cursor: 'pointer'
               }}>
-                Become a partner
+                Join Our Network
               </button>
             </div>
             <div style={{ 
@@ -1441,7 +1441,7 @@ function AboutPage() {
                 color: '#666', 
                 lineHeight: '1.6'
               }}>
-                LIFE DROP is a charity dedicated to reducing worldwide inequities in blood safety and sufficiency. Since 2008, we have helped over 50 poorly resourced countries in Africa, Asia and Latin America better serve their communities.
+                LIFE DROP is a digital platform dedicated to connecting hospitals with blood donors across East Africa. We serve Rwanda, Kenya, Uganda, and Tanzania by streamlining blood requests, verifying donors, and ensuring timely access to life-saving blood transfusions for patients in need.
               </p>
             </div>
           </div>
@@ -1466,7 +1466,7 @@ function AboutPage() {
                 color: '#666', 
                 lineHeight: '1.6'
               }}>
-                LIFE DROP has been reducing worldwide inequities in blood safety and sufficiency since 2008.
+                Launched in 2021, LIFE DROP was developed to address the critical blood shortage challenges facing East African healthcare systems. Our platform leverages modern technology to create seamless connections between hospitals posting urgent blood requests and verified donors ready to help, transforming how blood donation works across the region.
               </p>
             </div>
             <div style={{ 
@@ -2005,7 +2005,7 @@ function ImpactPage() {
                 color: '#666', 
                 lineHeight: '1.6'
               }}>
-                Anyone whose life has been touched by blood – understands its power to transform lives.
+                Every successful match through LIFE DROP represents a life saved, a family kept whole, and a community made stronger.
               </p>
             </div>
             <div style={{ 
@@ -2040,7 +2040,7 @@ function ImpactPage() {
             maxWidth: '800px',
             margin: '0 auto 60px'
           }}>
-            A healthier community needs a sustainable blood supply. Every day, somewhere in the world, our neighbors face disease outbreaks, extreme poverty and other crises. Their need for a safe, sufficient blood supply has never been greater. Read the stories of lives saved and communities healed.
+            Across East Africa, our platform ensures hospitals have reliable access to life-saving blood. Through LIFE DROP, donors and medical facilities connect seamlessly, creating stronger healthcare networks. Here are real stories from our community:
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
@@ -2082,7 +2082,7 @@ function ImpactPage() {
                 backgroundPosition: 'center',
                 marginBottom: '20px'
               }}></div>
-              <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '8px' }}>Emma Rodriguez</h3>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '8px' }}>Grace NAKATO</h3>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>"My daughter's battle with anemia was won thanks to regular blood transfusions. Every donor is a lifesaver."</p>
             </div>
           </div>
@@ -2099,31 +2099,25 @@ function ImpactPage() {
             textAlign: 'center',
             marginBottom: '40px'
           }}>
-            SUPPLYING THE WORLD
+            CONNECTING EAST AFRICA
           </h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', fontSize: '16px', color: '#666', lineHeight: '1.8' }}>
             <div>
-              <p>• Delivered over $2,000,000 (depreciated value) of re-homed equipment.</p>
-              <p>• Provide support to over 50 countries.</p>
-              <p>• Established first and only blood bank in Northern Laos.</p>
-              <p>• Donated two Trima Accel® Automated Blood Collection Systems to Ghanaian Ebola Readiness and Resilience Initiative.</p>
-              <p>• Hundreds of portable donor beds delivered to Nigeria, Mexico, Lesotho and Cambodia.</p>
-              <p>• Purchased computer equipment for a blood collector in Kenya.</p>
-              <p>• Delivered LifeServe machines to help grow the blood programs in Mexico.</p>
-              <p>• Funded a new TV spot to recruit blood donors in Haiti.</p>
-              <p>• Purchased technical manuals for 19 blood services across Latin America.</p>
+              <p>• 500+ hospitals registered across Rwanda, Kenya, Uganda, and Tanzania.</p>
+              <p>• 10,000+ verified donors in our network.</p>
+              <p>• Real-time blood matching system operational 24/7.</p>
+              <p>• SMS notification system reaching remote areas.</p>
+              <p>• Multi-language support for regional languages.</p>
+              <p>• Emergency blood request alerts to nearby donors.</p>
             </div>
             <div>
-              <p>• Supplied multiple bloodmobiles to increase collections in Mexico, Malawi and Lebanon.</p>
-              <p>• Hundreds of donation mixer/scales to Tanzania, Rwanda, Liberia, Botswana.</p>
-              <p>• Hemapheresis technology sent to Africa, the Middle East and Eastern Europe.</p>
-              <p>• Centrifuges supplied to Mexico.</p>
-              <p>• Clinical uniforms delivered to Armenia.</p>
-              <p>• Purchased computer equipment for a blood collector in Kenya.</p>
-              <p>• Provided promotional materials for a blood collector in Mexico.</p>
-              <p>• Funded recruitment training in Eastern Europe.</p>
-              <p>• Funded a trainer to deliver recruitment training in Georgia (Eastern Caucasus).</p>
+              <p>• Hospital dashboard for managing blood inventory.</p>
+              <p>• Donor scheduling system for convenient appointments.</p>
+              <p>• Blood type compatibility matching algorithm.</p>
+              <p>• Mobile-responsive platform accessible on any device.</p>
+              <p>• Secure data encryption protecting user information.</p>
+              <p>• API integration with hospital management systems.</p>
             </div>
           </div>
         </div>
@@ -2140,7 +2134,7 @@ function ImpactPage() {
                 lineHeight: '1.6',
                 fontStyle: 'italic'
               }}>
-                LIFE DROP focuses on enabling blood services in resource-poor countries to nurture that most precious of resources – blood donors.
+                LIFE DROP focuses on connecting East African hospitals with verified blood donors through our digital platform, ensuring that life-saving blood reaches patients when they need it most.
               </p>
             </div>
             <div style={{ 
