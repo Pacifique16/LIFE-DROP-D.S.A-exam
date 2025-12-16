@@ -1,4 +1,107 @@
 import { useState, useEffect } from 'react'
+import FundForm from './FundForm.jsx'
+import RegistrationForm from './RegistrationForm.jsx'
+import ContactForm from './ContactForm.jsx'
+import APIRequestForm from './APIRequestForm.jsx'
+import EnhancedContactForm from './EnhancedContactForm.jsx'
+import EnhancedPartnershipForm from './EnhancedPartnershipForm.jsx'
+import EnhancedEventPartnershipForm from './EnhancedEventPartnershipForm.jsx'
+
+// Animation styles
+const animations = `
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .slide-in-left { animation: slideInLeft 0.8s ease-out; }
+  .slide-in-right { animation: slideInRight 0.8s ease-out; }
+  .slide-in-up { animation: slideInUp 0.6s ease-out; }
+  .fade-in { animation: fadeIn 1s ease-out; }
+  .hover-lift { transition: all 0.3s ease; }
+  .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+  .hover-scale { transition: transform 0.3s ease; }
+  .hover-scale:hover { transform: scale(1.05); }
+  .hover-image { transition: all 0.3s ease; }
+  .hover-image:hover { transform: scale(1.1); filter: brightness(1.1); }
+  .hover-card { transition: all 0.3s ease; }
+  .hover-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+  .hover-glow { transition: all 0.3s ease; }
+  .hover-glow:hover { box-shadow: 0 0 30px rgba(112, 28, 69, 0.3); }
+  .modern-input { 
+    width: 100%; 
+    padding: 16px 20px; 
+    border: 2px solid #e2e8f0; 
+    border-radius: 12px;
+    fontSize: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    font-family: inherit;
+  }
+  .modern-input:focus {
+    border-color: #701C45;
+    box-shadow: 0 0 0 3px rgba(112, 28, 69, 0.1);
+    outline: none;
+  }
+  .modern-button {
+    background: linear-gradient(135deg, #701C45 0%, #8B2A5B 100%);
+    color: white;
+    padding: 18px 40px;
+    border-radius: 50px;
+    border: none;
+    fontSize: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(112, 28, 69, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .modern-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(112, 28, 69, 0.4);
+  }
+  .error-text {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .input-error {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+  }
+  .validation-enabled .modern-input:focus {
+    border-color: #701C45;
+    box-shadow: 0 0 0 3px rgba(112, 28, 69, 0.1);
+    outline: none;
+  }
+  .pulse-animation { animation: pulse 2s infinite; }
+  .float-animation { animation: float 3s ease-in-out infinite; }
+  .gradient-bg { background: linear-gradient(135deg, #701C45 0%, #8B2A5B 100%); }
+  .glass-effect { backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); }
+`
 import heroImage from './assets/Hero-home-group.png'
 import backgroundImage from './assets/background.png'
 import shapeImage from './assets/about-1-shape-2.png'
@@ -37,16 +140,26 @@ import donatingImage from './assets/donating.jpg'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
-  const [donationStep, setDonationStep] = useState(1)
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    country: 'Rwanda'
-  })
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Add intersection observer for scroll animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('slide-in-up')
+          }
+        })
+      },
+      { threshold: 0.1 }
+    )
+    
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+      observer.observe(el)
+    })
+    
+    return () => observer.disconnect()
   }, [currentPage])
 
   const renderPage = () => {
@@ -54,15 +167,17 @@ function App() {
       case 'about': return <AboutPage />
       case 'impact': return <ImpactPage />
       case 'contact': return <ContactPage />
-      case 'donate': return <DonatePage donationStep={donationStep} setDonationStep={setDonationStep} formData={formData} setFormData={setFormData} />
+      case 'register': return <RegistrationForm />
+      case 'api-request': return <APIRequestForm />
+
       case 'how-it-works': return <HowItWorksPage />
       case 'for-hospitals': return <ForHospitalsPage />
       case 'for-donors': return <ForDonorsPage />
-      case 'blood-drive-events': return <BloodDriveEventsPage />
+      case 'blood-drive-events': return <BloodDriveEventsPage setCurrentPage={setCurrentPage} />
 
       case 'faq': return <FAQPage />
       case 'partner-with-us': return <PartnerWithUsPage />
-      case 'api-integration': return <APIIntegrationPage />
+      case 'api-integration': return <APIIntegrationPage setCurrentPage={setCurrentPage} />
 
       case 'privacy-policy': return <PrivacyPolicyPage />
       case 'terms-of-service': return <TermsOfServicePage />
@@ -72,6 +187,7 @@ function App() {
 
   return (
     <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <style>{animations}</style>
       {/* Top Bar */}
       <div style={{ 
         background: 'rgb(243, 239, 237)',
@@ -101,12 +217,15 @@ function App() {
       </div>
       
       {/* Header */}
-      <header style={{ 
-        background: '#701C45',
+      <header className="glass-effect" style={{ 
+        background: 'rgba(112, 28, 69, 0.95)',
         padding: '20px 0',
         position: 'sticky',
         top: 0,
-        zIndex: 1000
+        zIndex: 1000,
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        transition: 'all 0.3s ease'
       }}>
         <div style={{ 
           maxWidth: '1200px', 
@@ -129,24 +248,42 @@ function App() {
               color: 'white', 
               cursor: 'pointer',
               fontSize: '16px',
-              fontWeight: '600'
-            }}>HOME</button>
+              fontWeight: '600',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={(e) => e.target.style.background = 'none'}
+            >HOME</button>
             <button onClick={() => { setCurrentPage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ 
               background: 'none', 
               border: 'none', 
               color: 'white', 
               cursor: 'pointer',
               fontSize: '16px',
-              fontWeight: '600'
-            }}>ABOUT US</button>
+              fontWeight: '600',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={(e) => e.target.style.background = 'none'}
+            >ABOUT US</button>
             <button onClick={() => { setCurrentPage('impact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ 
               background: 'none', 
               border: 'none', 
               color: 'white', 
               cursor: 'pointer',
               fontSize: '16px',
-              fontWeight: '600'
-            }}>IMPACT</button>
+              fontWeight: '600',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={(e) => e.target.style.background = 'none'}
+            >IMPACT</button>
           </nav>
         </div>
       </header>
@@ -156,11 +293,22 @@ function App() {
       </main>
       
       {/* Footer */}
-      <footer style={{ 
-        background: '#701C45', 
+      <footer className="gradient-bg" style={{ 
         color: 'white',
-        padding: '60px 0 30px'
+        padding: '60px 0 30px',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+          opacity: 0.3,
+          pointerEvents: 'none'
+        }}></div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '40px', marginBottom: '40px' }}>
             <div>
@@ -174,19 +322,19 @@ function App() {
             <div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px' }}>QUICK LINKS</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button onClick={() => setCurrentPage('how-it-works')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>How It Works</button>
-                <button onClick={() => setCurrentPage('for-hospitals')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>For Hospitals</button>
-                <button onClick={() => setCurrentPage('for-donors')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>For Donors</button>
-                <button onClick={() => setCurrentPage('blood-drive-events')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>Blood Drive Events</button>
+                <button onClick={() => setCurrentPage('how-it-works')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>How It Works</button>
+                <button onClick={() => setCurrentPage('for-hospitals')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>For Hospitals</button>
+                <button onClick={() => setCurrentPage('for-donors')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>For Donors</button>
+                <button onClick={() => setCurrentPage('blood-drive-events')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>Blood Drive Events</button>
 
-                <button onClick={() => setCurrentPage('faq')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>FAQ</button>
+                <button onClick={() => setCurrentPage('faq')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>FAQ</button>
               </div>
             </div>
             <div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px' }}>PARTNERS</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button onClick={() => setCurrentPage('partner-with-us')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>Partner With Us</button>
-                <button onClick={() => setCurrentPage('api-integration')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left' }}>API Integration</button>
+                <button onClick={() => setCurrentPage('partner-with-us')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>Partner With Us</button>
+                <button onClick={() => setCurrentPage('api-integration')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', fontSize: '14px', cursor: 'pointer', textAlign: 'left', padding: '4px 0', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>API Integration</button>
 
               </div>
             </div>
@@ -222,9 +370,9 @@ function App() {
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
             <div>Copyright © 2025 LIFE DROP | Powered by LIFE DROP</div>
             <div>
-              <button onClick={() => setCurrentPage('privacy-policy')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', marginRight: '20px' }}>Privacy Policy</button>
-              <button onClick={() => setCurrentPage('terms-of-service')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', marginRight: '20px' }}>Terms of Service</button>
-              <button onClick={() => setCurrentPage('contact')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px' }}>Contact Us</button>
+              <button onClick={() => setCurrentPage('privacy-policy')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', marginRight: '20px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>Privacy Policy</button>
+              <button onClick={() => setCurrentPage('terms-of-service')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', marginRight: '20px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>Terms of Service</button>
+              <button onClick={() => setCurrentPage('contact')} style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.color = '#FFB6C1'} onMouseLeave={(e) => e.target.style.color = 'white'}>Contact Us</button>
             </div>
           </div>
         </div>
@@ -234,18 +382,6 @@ function App() {
 }
 
 function HomePage({ setCurrentPage }) {
-  const [fundFormStep, setFundFormStep] = useState(1)
-  const [fundFormData, setFundFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    donationAmount: '',
-    customAmount: '',
-    cardNumber: '',
-    expirationDate: '',
-    securityCode: '',
-    country: 'Rwanda'
-  })
 
   const partners = [
     { logo: aucaLogo, name: 'AUCA' },
@@ -257,47 +393,32 @@ function HomePage({ setCurrentPage }) {
     { logo: urLogo, name: 'UR' }
   ]
 
-  const handleFundFormInputChange = (field, value) => {
-    setFundFormData(prev => ({ ...prev, [field]: value }))
-  }
 
-  const handleFundFormNext = () => {
-    setFundFormStep(prev => prev + 1)
-  }
 
-  const handleFundFormPrevious = () => {
-    setFundFormStep(prev => prev - 1)
-  }
 
-  const handleFundFormSubmit = () => {
-    alert('Thank you for your donation!')
-    setFundFormStep(1)
-    setFundFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      donationAmount: '',
-      customAmount: '',
-      cardNumber: '',
-      expirationDate: '',
-      securityCode: '',
-      country: 'Rwanda'
-    })
-  }
 
   return (
     <div>
       {/* Hero Section */}
-      <section style={{ 
+      <section className="fade-in" style={{ 
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '80px 0',
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 4px' }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(45deg, rgba(112, 28, 69, 0.1) 0%, rgba(139, 42, 91, 0.1) 100%)'
+        }}></div>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 4px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
-            <div>
+            <div className="slide-in-left">
               <h1 style={{ 
                 fontSize: '48px', 
                 fontWeight: 'bold', 
@@ -316,7 +437,7 @@ function HomePage({ setCurrentPage }) {
                 Save lives by helping East African hospitals collect sufficient, safe blood.
               </p>
               <button 
-                onClick={() => setCurrentPage('donate')}
+                onClick={() => setCurrentPage('register')}
                 style={{ 
                   background: '#701C45',
                   color: 'white', 
@@ -328,7 +449,7 @@ function HomePage({ setCurrentPage }) {
                   cursor: 'pointer'
                 }}
               >
-                DONATE NOW
+                REGISTER NOW
               </button>
             </div>
             <div style={{ position: 'relative' }}>
@@ -370,7 +491,7 @@ function HomePage({ setCurrentPage }) {
       </section>
 
       {/* Why Safe Blood Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
@@ -409,7 +530,12 @@ function HomePage({ setCurrentPage }) {
               </div>
               
               <button 
-                onClick={() => setCurrentPage('donate')}
+                onClick={() => {
+                  const fundSection = document.querySelector('[data-fund-form]')
+                  if (fundSection) {
+                    fundSection.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
                 style={{ 
                   background: '#701C45',
                   color: 'white', 
@@ -425,34 +551,33 @@ function HomePage({ setCurrentPage }) {
               </button>
             </div>
             <div style={{ position: 'relative' }}>
-              <div style={{ 
+              <div className="hover-image" style={{ 
                 width: '100%',
                 height: '400px',
                 borderRadius: '12px',
                 backgroundImage: `url(${medicalSceneImage})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative'
+                backgroundPosition: 'center'
               }}>
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-93px',
-                  right: '-93px',
-                  width: '280px',
-                  height: '180px',
-                  borderRadius: '8px',
-                  backgroundImage: `url(${schoolChildrenImage})`,
-                  backgroundSize: 'cover',
-                  border: '3px solid rgba(255, 255, 255, 0.8)'
-                }}></div>
               </div>
+              <div className="hover-image" style={{
+                position: 'absolute',
+                bottom: '-93px',
+                right: '-93px',
+                width: '280px',
+                height: '180px',
+                borderRadius: '8px',
+                backgroundImage: `url(${schoolChildrenImage})`,
+                backgroundSize: 'cover',
+                border: '3px solid rgba(255, 255, 255, 0.8)'
+              }}></div>
             </div>
           </div>
         </div>
       </section>
 
       {/* How We Make Impact Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ 
             fontSize: '36px', 
@@ -576,7 +701,7 @@ function HomePage({ setCurrentPage }) {
       </section>
 
       {/* Legacy Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
           <h2 style={{ 
             fontSize: '36px', 
@@ -597,7 +722,7 @@ function HomePage({ setCurrentPage }) {
           </p>
           
           {/* Partners Slider */}
-          <div style={{ marginTop: '60px' }}>
+          <div className="fade-in" style={{ marginTop: '60px' }}>
             <h3 style={{ 
               fontSize: '24px', 
               fontWeight: 'bold', 
@@ -625,11 +750,13 @@ function HomePage({ setCurrentPage }) {
                     key={index}
                     src={partner.logo} 
                     alt={partner.name} 
+                    className="hover-scale"
                     style={{ 
                       height: '60px', 
                       objectFit: 'contain',
-                      flexShrink: 0
-                    }} 
+                      flexShrink: 0,
+                      transition: 'all 0.3s ease'
+                    }}  
                   />
                 ))}
               </div>
@@ -666,7 +793,7 @@ function HomePage({ setCurrentPage }) {
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
-            <div style={{ 
+            <div className="hover-card" style={{ 
               background: '#701C45',
               color: 'white',
               padding: '40px 30px',
@@ -680,21 +807,23 @@ function HomePage({ setCurrentPage }) {
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Register your facility to post blood requests and connect with verified donors in your area.
               </p>
-              <button style={{ 
-                background: 'white',
-                color: '#701C45',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '25px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}>
+              <button 
+                onClick={() => setCurrentPage('register')}
+                style={{ 
+                  background: 'white',
+                  color: '#701C45',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '25px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}>
                 Register Hospital
               </button>
             </div>
             
-            <div style={{ 
+            <div className="hover-card" style={{ 
               background: '#701C45',
               color: 'white',
               padding: '40px 30px',
@@ -708,21 +837,23 @@ function HomePage({ setCurrentPage }) {
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Sign up to receive notifications about blood needs and schedule donations at nearby centers.
               </p>
-              <button style={{ 
-                background: 'white',
-                color: '#701C45',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '25px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}>
+              <button 
+                onClick={() => setCurrentPage('register')}
+                style={{ 
+                  background: 'white',
+                  color: '#701C45',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '25px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}>
                 Become a Donor
               </button>
             </div>
             
-            <div style={{ 
+            <div className="hover-card" style={{ 
               background: '#701C45',
               color: 'white',
               padding: '40px 30px',
@@ -738,16 +869,18 @@ function HomePage({ setCurrentPage }) {
               <p style={{ fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
                 Healthcare organizations can integrate with our API to expand blood donation networks.
               </p>
-              <button style={{ 
-                background: 'white',
-                color: '#701C45',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '25px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}>
+              <button 
+                onClick={() => setCurrentPage('partner-with-us')}
+                style={{ 
+                  background: 'white',
+                  color: '#701C45',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '25px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}>
                 Partner With Us
               </button>
             </div>
@@ -756,670 +889,70 @@ function HomePage({ setCurrentPage }) {
       </section>
 
       {/* Fund Our Mission Form Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <h2 style={{ 
-            fontSize: '36px', 
-            fontWeight: 'bold', 
-            color: '#701C45',
-            marginBottom: '24px'
-          }}>
-            FUND OUR MISSION
-          </h2>
-          <p style={{ 
-            fontSize: '16px', 
-            color: '#666', 
-            marginBottom: '60px',
-            lineHeight: '1.6',
-            maxWidth: '600px',
-            margin: '0 auto 60px'
-          }}>
-            Be the reason someone gets a second chance at life. Help us build a world where no woman, child, or accident victim loses the fight because of a lack of blood. Together, we can make survival the norm — not the exception.
-          </p>
-          
-          <div style={{ 
-            textAlign: 'left', 
-            maxWidth: '500px', 
-            margin: '0 auto',
-            background: 'white',
-            padding: '40px',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            border: '1px solid #e0e0e0'
-          }}>
-            <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#333' }}>
-                Step {fundFormStep} of 3
-              </span>
-            </div>
-            <div style={{ 
-              width: '100%', 
-              height: '8px', 
-              background: '#e0e0e0', 
-              borderRadius: '4px',
-              overflow: 'hidden',
-              marginBottom: '40px'
-            }}>
-              <div style={{ 
-                width: `${(fundFormStep / 3) * 100}%`, 
-                height: '100%', 
-                background: '#4CAF50',
-                transition: 'width 0.3s ease'
-              }}></div>
-            </div>
-
-            {fundFormStep === 1 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Name <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>First</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.firstName}
-                        onChange={(e) => handleFundFormInputChange('firstName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>Last</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.lastName}
-                        onChange={(e) => handleFundFormInputChange('lastName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Email <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <input 
-                    type="email"
-                    value={fundFormData.email}
-                    onChange={(e) => handleFundFormInputChange('email', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <button 
-                  onClick={handleFundFormNext}
-                  style={{ 
-                    background: '#701C45',
-                    color: 'white', 
-                    padding: '16px 32px', 
-                    borderRadius: '25px', 
-                    border: 'none', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Next
-                </button>
-              </>
-            )}
-
-            {fundFormStep === 2 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '16px'
-                  }}>
-                    Donation Amount <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    {['10', '50', '250'].map(amount => (
-                      <label key={amount} style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                        <input 
-                          type="radio" 
-                          name="donationAmount" 
-                          value={amount}
-                          checked={fundFormData.donationAmount === amount}
-                          onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        ${amount} USD
-                      </label>
-                    ))}
-                    <label style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="donationAmount" 
-                        value="custom"
-                        checked={fundFormData.donationAmount === 'custom'}
-                        onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                        style={{ marginRight: '8px' }}
-                      />
-                      Other amount
-                    </label>
-                  </div>
-                  {fundFormData.donationAmount === 'custom' && (
-                    <input 
-                      type="number"
-                      placeholder="Enter amount"
-                      value={fundFormData.customAmount}
-                      onChange={(e) => handleFundFormInputChange('customAmount', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginTop: '8px'
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormNext}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )}
-
-            {fundFormStep === 3 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Credit Card <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    <input 
-                      type="text"
-                      placeholder="Card number"
-                      value={fundFormData.cardNumber}
-                      onChange={(e) => handleFundFormInputChange('cardNumber', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginBottom: '16px'
-                      }}
-                    />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <input 
-                        type="text"
-                        placeholder="MM/YY"
-                        value={fundFormData.expirationDate}
-                        onChange={(e) => handleFundFormInputChange('expirationDate', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <input 
-                        type="text"
-                        placeholder="CVC"
-                        value={fundFormData.securityCode}
-                        onChange={(e) => handleFundFormInputChange('securityCode', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <select 
-                    value={fundFormData.country}
-                    onChange={(e) => handleFundFormInputChange('country', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <option value="Rwanda">Rwanda</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="Uganda">Uganda</option>
-                    <option value="Tanzania">Tanzania</option>
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormSubmit}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-function DonatePage({ donationStep, setDonationStep, formData, setFormData }) {
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleNext = () => {
-    setDonationStep(2)
-  }
-
-  const handlePrevious = () => {
-    setDonationStep(1)
-  }
-
-  const handleSubmit = () => {
-    alert('Thank you for your donation!')
-  }
-
-  return (
-    <div style={{ padding: '80px 0', background: '#f5f5f5', minHeight: '80vh' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h1 style={{ 
-            fontSize: '36px', 
-            fontWeight: 'bold', 
-            color: '#701C45',
-            marginBottom: '16px'
-          }}>
-            MAKE AN IMPACT TODAY
-          </h1>
-          <p style={{ fontSize: '18px', color: '#666' }}>
-            Your support ensures that life-saving blood is accessible where it's needed most.
-          </p>
-        </div>
-
-        <div style={{ marginBottom: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-            <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#701C45' }}>
-              Step {donationStep} of 3
-            </span>
-          </div>
-          <div style={{ 
-            width: '100%', 
-            height: '8px', 
-            background: '#e0e0e0', 
-            borderRadius: '4px',
-            overflow: 'hidden'
-          }}>
-            <div style={{ 
-              width: `${(donationStep / 3) * 100}%`, 
-              height: '100%', 
-              background: '#4CAF50',
-              transition: 'width 0.3s ease'
-            }}></div>
-          </div>
-        </div>
-
-        {donationStep === 1 && (
-          <div style={{ 
-            background: 'white',
-            padding: '40px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ marginBottom: '32px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#333',
-                marginBottom: '8px'
-              }}>
-                Name <span style={{ color: '#e74c3c' }}>(Required)</span>
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>First</label>
-                  <input 
-                    type="text"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>Last</label>
-                  <input 
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '32px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#333',
-                marginBottom: '8px'
-              }}>
-                Email <span style={{ color: '#e74c3c' }}>(Required)</span>
-              </label>
-              <input 
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                style={{ 
-                  width: '100%', 
-                  padding: '12px 16px', 
-                  border: '2px solid #e0e0e0', 
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <button 
-              onClick={handleNext}
-              style={{ 
-                background: '#701C45',
-                color: 'white', 
-                padding: '16px 32px', 
-                borderRadius: '8px', 
-                border: 'none', 
-                fontSize: '16px', 
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        {donationStep === 2 && (
-          <div style={{ 
-            background: 'white',
-            padding: '40px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ marginBottom: '32px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#333',
-                marginBottom: '8px'
-              }}>
-                Country
-              </label>
-              <select 
-                value={formData.country}
-                onChange={(e) => handleInputChange('country', e.target.value)}
-                style={{ 
-                  width: '100%', 
-                  padding: '12px 16px', 
-                  border: '2px solid #e0e0e0', 
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  boxSizing: 'border-box'
-                }}
-              >
-                <option value="Rwanda">Rwanda</option>
-                <option value="Kenya">Kenya</option>
-                <option value="Uganda">Uganda</option>
-                <option value="Tanzania">Tanzania</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <button 
-                onClick={handlePrevious}
-                style={{ 
-                  background: '#6c757d',
-                  color: 'white', 
-                  padding: '16px 32px', 
-                  borderRadius: '8px', 
-                  border: 'none', 
-                  fontSize: '16px', 
-                  fontWeight: 'bold',
-                  cursor: 'pointer'
-                }}
-              >
-                Previous
-              </button>
-              <button 
-                onClick={handleSubmit}
-                style={{ 
-                  background: '#701C45',
-                  color: 'white', 
-                  padding: '16px 32px', 
-                  borderRadius: '8px', 
-                  border: 'none', 
-                  fontSize: '16px', 
-                  fontWeight: 'bold',
-                  cursor: 'pointer'
-                }}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        )}
+      <div data-fund-form>
+        <FundForm />
       </div>
     </div>
   )
 }
 
+
+
 function AboutPage() {
-  const [fundFormStep, setFundFormStep] = useState(1)
-  const [fundFormData, setFundFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    donationAmount: '',
-    customAmount: '',
-    cardNumber: '',
-    expirationDate: '',
-    securityCode: '',
-    country: 'Rwanda'
-  })
-
-  const handleFundFormInputChange = (field, value) => {
-    setFundFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleFundFormNext = () => {
-    setFundFormStep(prev => prev + 1)
-  }
-
-  const handleFundFormPrevious = () => {
-    setFundFormStep(prev => prev - 1)
-  }
-
-  const handleFundFormSubmit = () => {
-    alert('Thank you for your donation!')
-    setFundFormStep(1)
-    setFundFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      donationAmount: '',
-      customAmount: '',
-      cardNumber: '',
-      expirationDate: '',
-      securityCode: '',
-      country: 'Rwanda'
-    })
-  }
 
   return (
     <div>
 
       {/* Mission Section */}
-      <section style={{ 
+      <section className="fade-in" style={{ 
         padding: '100px 0', 
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(45deg, rgba(112, 28, 69, 0.1) 0%, rgba(139, 42, 91, 0.1) 100%)'
+        }}></div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h2 style={{ 
-                fontSize: '36px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                MISSION
-              </h2>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#666', 
-                marginBottom: '32px',
-                lineHeight: '1.6'
-              }}>
-                Our aim is simple; to save lives by improving the availability and safety of blood across East Africa through our digital platform that connects hospitals with verified donors.
-              </p>
-              <button style={{ 
-                background: '#701C45',
-                color: 'white', 
-                padding: '16px 32px', 
-                borderRadius: '25px', 
-                border: 'none', 
-                fontSize: '16px', 
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}>
-                Join Our Network
-              </button>
+              <div className="slide-in-left">
+                <h2 style={{ 
+                  fontSize: '36px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  MISSION
+                </h2>
+                <p style={{ 
+                  fontSize: '16px', 
+                  color: '#666', 
+                  marginBottom: '32px',
+                  lineHeight: '1.6'
+                }}>
+                  Our aim is simple; to save lives by improving the availability and safety of blood across East Africa through our digital platform that connects hospitals with verified donors.
+                </p>
+                <button style={{ 
+                  background: '#701C45',
+                  color: 'white', 
+                  padding: '16px 32px', 
+                  borderRadius: '25px', 
+                  border: 'none', 
+                  fontSize: '16px', 
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}>
+                  Join Our Network
+                </button>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -1434,7 +967,7 @@ function AboutPage() {
       </section>
 
       {/* Who We Are Section */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '100px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div style={{ 
@@ -1467,7 +1000,7 @@ function AboutPage() {
       </section>
 
       {/* History Section */}
-      <section style={{ padding: '100px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '100px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
@@ -1499,359 +1032,8 @@ function AboutPage() {
         </div>
       </section>
 
-
-
       {/* Fund Our Mission Form Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <h2 style={{ 
-            fontSize: '36px', 
-            fontWeight: 'bold', 
-            color: '#701C45',
-            marginBottom: '24px'
-          }}>
-            FUND OUR MISSION
-          </h2>
-          <p style={{ 
-            fontSize: '16px', 
-            color: '#666', 
-            marginBottom: '60px',
-            lineHeight: '1.6',
-            maxWidth: '600px',
-            margin: '0 auto 60px'
-          }}>
-            Be the reason someone gets a second chance at life. Help us build a world where no woman, child, or accident victim loses the fight because of a lack of blood. Together, we can make survival the norm — not the exception.
-          </p>
-          
-          <div style={{ 
-            textAlign: 'left', 
-            maxWidth: '500px', 
-            margin: '0 auto',
-            background: 'white',
-            padding: '40px',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            border: '1px solid #e0e0e0'
-          }}>
-            <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#333' }}>
-                Step {fundFormStep} of 3
-              </span>
-            </div>
-            <div style={{ 
-              width: '100%', 
-              height: '8px', 
-              background: '#e0e0e0', 
-              borderRadius: '4px',
-              overflow: 'hidden',
-              marginBottom: '40px'
-            }}>
-              <div style={{ 
-                width: `${(fundFormStep / 3) * 100}%`, 
-                height: '100%', 
-                background: '#4CAF50',
-                transition: 'width 0.3s ease'
-              }}></div>
-            </div>
-
-            {fundFormStep === 1 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Name <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>First</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.firstName}
-                        onChange={(e) => handleFundFormInputChange('firstName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>Last</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.lastName}
-                        onChange={(e) => handleFundFormInputChange('lastName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Email <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <input 
-                    type="email"
-                    value={fundFormData.email}
-                    onChange={(e) => handleFundFormInputChange('email', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <button 
-                  onClick={handleFundFormNext}
-                  style={{ 
-                    background: '#701C45',
-                    color: 'white', 
-                    padding: '16px 32px', 
-                    borderRadius: '25px', 
-                    border: 'none', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Next
-                </button>
-              </>
-            )}
-
-            {fundFormStep === 2 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '16px'
-                  }}>
-                    Donation Amount <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    {['10', '50', '250'].map(amount => (
-                      <label key={amount} style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                        <input 
-                          type="radio" 
-                          name="donationAmount" 
-                          value={amount}
-                          checked={fundFormData.donationAmount === amount}
-                          onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        ${amount} USD
-                      </label>
-                    ))}
-                    <label style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="donationAmount" 
-                        value="custom"
-                        checked={fundFormData.donationAmount === 'custom'}
-                        onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                        style={{ marginRight: '8px' }}
-                      />
-                      Other amount
-                    </label>
-                  </div>
-                  {fundFormData.donationAmount === 'custom' && (
-                    <input 
-                      type="number"
-                      placeholder="Enter amount"
-                      value={fundFormData.customAmount}
-                      onChange={(e) => handleFundFormInputChange('customAmount', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginTop: '8px'
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormNext}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )}
-
-            {fundFormStep === 3 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Credit Card <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    <input 
-                      type="text"
-                      placeholder="Card number"
-                      value={fundFormData.cardNumber}
-                      onChange={(e) => handleFundFormInputChange('cardNumber', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginBottom: '16px'
-                      }}
-                    />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <input 
-                        type="text"
-                        placeholder="MM/YY"
-                        value={fundFormData.expirationDate}
-                        onChange={(e) => handleFundFormInputChange('expirationDate', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <input 
-                        type="text"
-                        placeholder="CVC"
-                        value={fundFormData.securityCode}
-                        onChange={(e) => handleFundFormInputChange('securityCode', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <select 
-                    value={fundFormData.country}
-                    onChange={(e) => handleFundFormInputChange('country', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <option value="Rwanda">Rwanda</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="Uganda">Uganda</option>
-                    <option value="Tanzania">Tanzania</option>
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormSubmit}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      <FundForm />
     </div>
   )
 }
@@ -1957,59 +1139,30 @@ function LoginPage() {
 }
 
 function ImpactPage() {
-  const [fundFormStep, setFundFormStep] = useState(1)
-  const [fundFormData, setFundFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    donationAmount: '',
-    customAmount: '',
-    cardNumber: '',
-    expirationDate: '',
-    securityCode: '',
-    country: 'Rwanda'
-  })
-
-  const handleFundFormInputChange = (field, value) => {
-    setFundFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleFundFormNext = () => {
-    setFundFormStep(prev => prev + 1)
-  }
-
-  const handleFundFormPrevious = () => {
-    setFundFormStep(prev => prev - 1)
-  }
-
-  const handleFundFormSubmit = () => {
-    alert('Thank you for your donation!')
-    setFundFormStep(1)
-    setFundFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      donationAmount: '',
-      customAmount: '',
-      cardNumber: '',
-      expirationDate: '',
-      securityCode: '',
-      country: 'Rwanda'
-    })
-  }
 
   return (
     <div>
       {/* Impact Section */}
-      <section style={{ 
+      <section className="fade-in" style={{ 
         padding: '100px 0', 
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(45deg, rgba(112, 28, 69, 0.1) 0%, rgba(139, 42, 91, 0.1) 100%)'
+        }}></div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
+              <div className="slide-in-left">
               <h2 style={{ 
                 fontSize: '36px', 
                 fontWeight: 'bold', 
@@ -2025,6 +1178,7 @@ function ImpactPage() {
               }}>
                 Every successful match through LIFE DROP represents a life saved, a family kept whole, and a community made stronger.
               </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -2039,7 +1193,7 @@ function ImpactPage() {
       </section>
 
       {/* Strengthening Communities Section */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '100px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ 
             fontSize: '36px', 
@@ -2063,7 +1217,7 @@ function ImpactPage() {
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ 
+              <div className="hover-image" style={{ 
                 width: '100%',
                 height: '300px',
                 borderRadius: '12px',
@@ -2077,7 +1231,7 @@ function ImpactPage() {
             </div>
             
             <div style={{ textAlign: 'center' }}>
-              <div style={{ 
+              <div className="hover-image" style={{ 
                 width: '100%',
                 height: '300px',
                 borderRadius: '12px',
@@ -2091,7 +1245,7 @@ function ImpactPage() {
             </div>
             
             <div style={{ textAlign: 'center' }}>
-              <div style={{ 
+              <div className="hover-image" style={{ 
                 width: '100%',
                 height: '300px',
                 borderRadius: '12px',
@@ -2108,7 +1262,7 @@ function ImpactPage() {
       </section>
 
       {/* Supplying the World Section */}
-      <section style={{ padding: '100px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '100px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ 
             fontSize: '36px', 
@@ -2142,7 +1296,7 @@ function ImpactPage() {
       </section>
 
       {/* Focus Section */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '100px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
@@ -2168,356 +1322,7 @@ function ImpactPage() {
       </section>
 
       {/* Fund Our Mission Form Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <h2 style={{ 
-            fontSize: '36px', 
-            fontWeight: 'bold', 
-            color: '#701C45',
-            marginBottom: '24px'
-          }}>
-            FUND OUR MISSION
-          </h2>
-          <p style={{ 
-            fontSize: '16px', 
-            color: '#666', 
-            marginBottom: '60px',
-            lineHeight: '1.6',
-            maxWidth: '600px',
-            margin: '0 auto 60px'
-          }}>
-            Be the reason someone gets a second chance at life. Help us build a world where no woman, child, or accident victim loses the fight because of a lack of blood. Together, we can make survival the norm — not the exception.
-          </p>
-          
-          <div style={{ 
-            textAlign: 'left', 
-            maxWidth: '500px', 
-            margin: '0 auto',
-            background: 'white',
-            padding: '40px',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            border: '1px solid #e0e0e0'
-          }}>
-            <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#333' }}>
-                Step {fundFormStep} of 3
-              </span>
-            </div>
-            <div style={{ 
-              width: '100%', 
-              height: '8px', 
-              background: '#e0e0e0', 
-              borderRadius: '4px',
-              overflow: 'hidden',
-              marginBottom: '40px'
-            }}>
-              <div style={{ 
-                width: `${(fundFormStep / 3) * 100}%`, 
-                height: '100%', 
-                background: '#4CAF50',
-                transition: 'width 0.3s ease'
-              }}></div>
-            </div>
-
-            {fundFormStep === 1 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Name <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>First</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.firstName}
-                        onChange={(e) => handleFundFormInputChange('firstName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: '14px', color: '#666', marginBottom: '4px', display: 'block' }}>Last</label>
-                      <input 
-                        type="text"
-                        value={fundFormData.lastName}
-                        onChange={(e) => handleFundFormInputChange('lastName', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Email <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <input 
-                    type="email"
-                    value={fundFormData.email}
-                    onChange={(e) => handleFundFormInputChange('email', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-
-                <button 
-                  onClick={handleFundFormNext}
-                  style={{ 
-                    background: '#701C45',
-                    color: 'white', 
-                    padding: '16px 32px', 
-                    borderRadius: '25px', 
-                    border: 'none', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Next
-                </button>
-              </>
-            )}
-
-            {fundFormStep === 2 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '16px'
-                  }}>
-                    Donation Amount <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    {['10', '50', '250'].map(amount => (
-                      <label key={amount} style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                        <input 
-                          type="radio" 
-                          name="donationAmount" 
-                          value={amount}
-                          checked={fundFormData.donationAmount === amount}
-                          onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        ${amount} USD
-                      </label>
-                    ))}
-                    <label style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="donationAmount" 
-                        value="custom"
-                        checked={fundFormData.donationAmount === 'custom'}
-                        onChange={(e) => handleFundFormInputChange('donationAmount', e.target.value)}
-                        style={{ marginRight: '8px' }}
-                      />
-                      Other amount
-                    </label>
-                  </div>
-                  {fundFormData.donationAmount === 'custom' && (
-                    <input 
-                      type="number"
-                      placeholder="Enter amount"
-                      value={fundFormData.customAmount}
-                      onChange={(e) => handleFundFormInputChange('customAmount', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginTop: '8px'
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormNext}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )}
-
-            {fundFormStep === 3 && (
-              <>
-                <div style={{ marginBottom: '32px' }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold', 
-                    color: '#333',
-                    marginBottom: '8px'
-                  }}>
-                    Credit Card <span style={{ color: '#e74c3c' }}>(Required)</span>
-                  </label>
-                  <div style={{ marginBottom: '16px' }}>
-                    <input 
-                      type="text"
-                      placeholder="Card number"
-                      value={fundFormData.cardNumber}
-                      onChange={(e) => handleFundFormInputChange('cardNumber', e.target.value)}
-                      style={{ 
-                        width: '100%', 
-                        padding: '12px 16px', 
-                        border: '2px solid #e0e0e0', 
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        boxSizing: 'border-box',
-                        marginBottom: '16px'
-                      }}
-                    />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <input 
-                        type="text"
-                        placeholder="MM/YY"
-                        value={fundFormData.expirationDate}
-                        onChange={(e) => handleFundFormInputChange('expirationDate', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <input 
-                        type="text"
-                        placeholder="CVC"
-                        value={fundFormData.securityCode}
-                        onChange={(e) => handleFundFormInputChange('securityCode', e.target.value)}
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px 16px', 
-                          border: '2px solid #e0e0e0', 
-                          borderRadius: '8px',
-                          fontSize: '16px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <select 
-                    value={fundFormData.country}
-                    onChange={(e) => handleFundFormInputChange('country', e.target.value)}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <option value="Rwanda">Rwanda</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="Uganda">Uganda</option>
-                    <option value="Tanzania">Tanzania</option>
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button 
-                    onClick={handleFundFormPrevious}
-                    style={{ 
-                      background: '#6c757d',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleFundFormSubmit}
-                    style={{ 
-                      background: '#701C45',
-                      color: 'white', 
-                      padding: '16px 32px', 
-                      borderRadius: '25px', 
-                      border: 'none', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      <FundForm />
     </div>
   )
 }
@@ -2526,15 +1331,26 @@ function ContactPage() {
   return (
     <div>
       {/* Contact Hero Section */}
-      <section style={{ 
+      <section className="fade-in" style={{ 
         padding: '100px 0', 
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(45deg, rgba(112, 28, 69, 0.1) 0%, rgba(139, 42, 91, 0.1) 100%)'
+        }}></div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
+              <div className="slide-in-left">
               <h1 style={{ 
                 fontSize: '48px', 
                 fontWeight: 'bold', 
@@ -2550,6 +1366,7 @@ function ContactPage() {
               }}>
                 Get in touch with us. We're here to help and answer any questions you might have.
               </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -2565,7 +1382,7 @@ function ContactPage() {
       </section>
 
       {/* Contact Information Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '60px' }}>
             <div>
@@ -2642,81 +1459,7 @@ function ContactPage() {
               </div>
             </div>
             
-            <div style={{ 
-              background: '#f5f5f5',
-              padding: '40px',
-              borderRadius: '12px'
-            }}>
-              <h3 style={{ 
-                fontSize: '24px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                Send us a Message
-              </h3>
-              <form>
-                <div style={{ marginBottom: '20px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Your Name" 
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }} 
-                  />
-                </div>
-                <div style={{ marginBottom: '20px' }}>
-                  <input 
-                    type="email" 
-                    placeholder="Your Email" 
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box'
-                    }} 
-                  />
-                </div>
-                <div style={{ marginBottom: '20px' }}>
-                  <textarea 
-                    placeholder="Your Message" 
-                    rows="5"
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '2px solid #e0e0e0', 
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      boxSizing: 'border-box',
-                      resize: 'vertical'
-                    }} 
-                  />
-                </div>
-                <button 
-                  type="submit" 
-                  style={{ 
-                    background: '#701C45',
-                    color: 'white', 
-                    padding: '16px 32px', 
-                    borderRadius: '8px', 
-                    border: 'none', 
-                    fontSize: '16px', 
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    width: '100%'
-                  }}
-                >
-                  Send Message
-                </button>
-              </form>
-            </div>
+            <EnhancedContactForm />
           </div>
         </div>
       </section>
@@ -2737,21 +1480,23 @@ function HowItWorksPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                HOW IT WORKS
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Learn how LIFE DROP connects hospitals with blood donors across East Africa through our streamlined digital platform.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  HOW IT WORKS
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Learn how LIFE DROP connects hospitals with blood donors across East Africa through our streamlined digital platform.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -2767,7 +1512,7 @@ function HowItWorksPage() {
       </section>
 
       {/* Process Overview Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>STREAMLINED DONATION PROCESS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px' }}>
@@ -2796,19 +1541,19 @@ function HowItWorksPage() {
       </section>
 
       {/* Technology Features Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>ADVANCED PLATFORM FEATURES</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Real-Time Matching</h3>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>AI-powered algorithm processes donor-request matches within 5 seconds, ensuring rapid response for emergency situations.</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>24/7 Availability</h3>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Cloud-based infrastructure ensures continuous platform availability for critical blood requests and emergency responses.</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Secure Data Protection</h3>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Enterprise-grade encryption and authentication protect all medical data in compliance with healthcare privacy regulations.</p>
             </div>
@@ -2831,21 +1576,23 @@ function ForHospitalsPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                FOR HOSPITALS
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Register your hospital and post blood requests to our verified donor network. Access life-saving blood when you need it most.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  FOR HOSPITALS
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Register your hospital and post blood requests to our verified donor network. Access life-saving blood when you need it most.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -2861,7 +1608,7 @@ function ForHospitalsPage() {
       </section>
 
       {/* Hospital Benefits Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>COMPREHENSIVE HOSPITAL SOLUTIONS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
@@ -2897,26 +1644,26 @@ function ForHospitalsPage() {
       </section>
 
       {/* Registration Process Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>HOSPITAL REGISTRATION PROCESS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '30px' }}>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Step 1</div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Institution Verification</h4>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>Submit hospital license, medical facility certification, and authorized personnel credentials.</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Step 2</div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>System Integration</h4>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>Configure API integration with existing hospital management systems and blood bank protocols.</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Step 3</div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Staff Training</h4>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>Comprehensive training for medical staff on platform usage, request management, and donor coordination.</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#701C45', marginBottom: '16px' }}>Step 4</div>
               <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Go Live</h4>
               <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5' }}>Begin creating blood requests, accessing donor network, and managing inventory through our platform.</p>
@@ -2940,21 +1687,23 @@ function ForDonorsPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                FOR DONORS
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Join our network of verified blood donors and help save lives in your community. Get notified when hospitals need your blood type.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  FOR DONORS
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Join our network of verified blood donors and help save lives in your community. Get notified when hospitals need your blood type.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -2970,7 +1719,7 @@ function ForDonorsPage() {
       </section>
 
       {/* Donor Benefits Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>BECOME A VERIFIED LIFE SAVER</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
@@ -3006,7 +1755,7 @@ function ForDonorsPage() {
       </section>
 
       {/* Eligibility Requirements Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>DONOR ELIGIBILITY REQUIREMENTS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px' }}>
@@ -3059,7 +1808,7 @@ function ForDonorsPage() {
   )
 }
 
-function BloodDriveEventsPage() {
+function BloodDriveEventsPage({ setCurrentPage }) {
   return (
     <div>
       <section style={{ 
@@ -3071,21 +1820,23 @@ function BloodDriveEventsPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                BLOOD DRIVE EVENTS
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Find upcoming blood drive events in your area and schedule your donation. Make a difference in your community.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  BLOOD DRIVE EVENTS
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Find upcoming blood drive events in your area and schedule your donation. Make a difference in your community.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3101,11 +1852,11 @@ function BloodDriveEventsPage() {
       </section>
 
       {/* Upcoming Events Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>UPCOMING BLOOD DRIVE EVENTS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
-            <div style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px', border: '2px solid #701C45' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px', border: '2px solid #701C45' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ background: '#701C45', color: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>URGENT</div>
                 <div style={{ fontSize: '14px', color: '#666' }}>Jan 15, 2025</div>
@@ -3113,9 +1864,9 @@ function BloodDriveEventsPage() {
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Kigali Central Hospital</h3>
               <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>Emergency blood drive for surgical patients. All blood types needed, especially O- and AB+.</p>
               <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>📍 KN 4 Ave, Kigali • 8:00 AM - 6:00 PM</div>
-              <button style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
+              <button onClick={() => setCurrentPage('register')} style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
             </div>
-            <div style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ background: '#4CAF50', color: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>SCHEDULED</div>
                 <div style={{ fontSize: '14px', color: '#666' }}>Mar 10, 2025</div>
@@ -3123,9 +1874,9 @@ function BloodDriveEventsPage() {
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>University of Rwanda</h3>
               <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>Campus blood drive for students and staff. Mobile donation units available.</p>
               <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>📍 UR Campus, Huye • 9:00 AM - 4:00 PM</div>
-              <button style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
+              <button onClick={() => setCurrentPage('register')} style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
             </div>
-            <div style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '30px', borderRadius: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ background: '#FF9800', color: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>COMMUNITY</div>
                 <div style={{ fontSize: '14px', color: '#666' }}>Apr 25, 2025</div>
@@ -3133,14 +1884,14 @@ function BloodDriveEventsPage() {
               <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Nyamirambo Community Center</h3>
               <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>Holiday community blood drive. Family-friendly event with refreshments.</p>
               <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>📍 Nyamirambo, Kigali • 10:00 AM - 3:00 PM</div>
-              <button style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
+              <button onClick={() => setCurrentPage('register')} style={{ background: '#701C45', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Register to Donate</button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Event Organization Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>ORGANIZE A BLOOD DRIVE EVENT</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
@@ -3166,22 +1917,7 @@ function BloodDriveEventsPage() {
                 </div>
               </div>
             </div>
-            <div style={{ background: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-              <h4 style={{ fontSize: '20px', fontWeight: 'bold', color: '#701C45', marginBottom: '24px' }}>Request Event Partnership</h4>
-              <div style={{ marginBottom: '20px' }}>
-                <input type="text" placeholder="Organization Name" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <input type="email" placeholder="Contact Email" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <input type="date" placeholder="Preferred Date" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <textarea placeholder="Event Details" rows="4" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box', resize: 'vertical' }} />
-              </div>
-              <button style={{ background: '#701C45', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Submit Partnership Request</button>
-            </div>
+            <EnhancedEventPartnershipForm />
           </div>
         </div>
       </section>
@@ -3201,21 +1937,23 @@ function FAQPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                FREQUENTLY ASKED QUESTIONS
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Find answers to common questions about blood donation and our platform. Get the information you need.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  FREQUENTLY ASKED QUESTIONS
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Find answers to common questions about blood donation and our platform. Get the information you need.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3231,25 +1969,25 @@ function FAQPage() {
       </section>
 
       {/* FAQ Categories Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px' }}>
             <div>
               <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: '#701C45', marginBottom: '40px' }}>For Donors</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Who can donate blood?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Healthy individuals aged 18-65, weighing at least 50kg, with no recent illness or medication that affects blood safety. Our system automatically checks eligibility based on your health profile.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>How often can I donate?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Whole blood donations require a 3-month interval between donations. Our platform tracks your donation history and automatically notifies you when you're eligible to donate again.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Is the donation process safe?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Yes, all donations are conducted at certified medical facilities with sterile, single-use equipment. Medical professionals oversee the entire process to ensure donor safety.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>How do I receive donation requests?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Once registered, you'll receive SMS and app notifications when hospitals need your blood type. You can accept or decline requests based on your availability.</p>
                 </div>
@@ -3258,19 +1996,19 @@ function FAQPage() {
             <div>
               <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: '#701C45', marginBottom: '40px' }}>For Hospitals</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>How do I register my hospital?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Submit your medical facility license, certification documents, and authorized personnel credentials. Our verification team reviews applications within 48 hours.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>How quickly can I find donors?</h3>
-                  <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Our AI matching system processes requests within 5 seconds and immediately alerts eligible donors in your area. Emergency requests receive priority status.</p>
+                  <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Our AI matching system processes requests within 5 seconds and immediately alerts eligible donors in your area. Emergency requests receive priority status compared to other requests.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>Can I integrate with existing systems?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>Yes, our API seamlessly integrates with hospital management systems, blood bank software, and inventory management platforms. Technical support is provided during setup.</p>
                 </div>
-                <div style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
+                <div className="hover-card" style={{ background: '#f5f5f5', padding: '24px', borderRadius: '12px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '12px' }}>How is data security maintained?</h3>
                   <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>All medical data is encrypted with enterprise-grade security, compliant with healthcare privacy regulations. Access is restricted to authorized personnel only.</p>
                 </div>
@@ -3281,22 +2019,22 @@ function FAQPage() {
       </section>
 
       {/* Contact Support Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
           <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#701C45', marginBottom: '24px' }}>Still Have Questions?</h2>
           <p style={{ fontSize: '16px', color: '#666', marginBottom: '40px', lineHeight: '1.6' }}>Our support team is available 24/7 to assist with any questions about blood donation, platform usage, or technical issues.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>📧</div>
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '8px' }}>Email Support</h3>
               <p style={{ fontSize: '14px', color: '#666' }}>support@lifedrop.org</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>📞</div>
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '8px' }}>Phone Support</h3>
               <p style={{ fontSize: '14px', color: '#666' }}>+250 789 534 491</p>
             </div>
-            <div style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>💬</div>
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#701C45', marginBottom: '8px' }}>Live Chat</h3>
               <p style={{ fontSize: '14px', color: '#666' }}>Available 24/7</p>
@@ -3320,21 +2058,23 @@ function PartnerWithUsPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                PARTNER WITH US
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Join our network of healthcare partners and expand blood donation access across East Africa.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  PARTNER WITH US
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Join our network of healthcare partners and expand blood donation access across East Africa.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3350,11 +2090,11 @@ function PartnerWithUsPage() {
       </section>
 
       {/* Partnership Types Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>STRATEGIC PARTNERSHIP OPPORTUNITIES</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
-            <div style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ width: '80px', height: '80px', background: '#701C45', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
                   <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-4v-4H5v-4h5V5h4v4h5v4h-5v4z"/>
@@ -3381,7 +2121,7 @@ function PartnerWithUsPage() {
                 </div>
               </div>
             </div>
-            <div style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ width: '80px', height: '80px', background: '#701C45', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -3408,7 +2148,7 @@ function PartnerWithUsPage() {
                 </div>
               </div>
             </div>
-            <div style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
+            <div className="hover-card" style={{ background: '#f5f5f5', padding: '40px', borderRadius: '12px', textAlign: 'center' }}>
               <div style={{ width: '80px', height: '80px', background: '#701C45', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
                   <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
@@ -3440,7 +2180,7 @@ function PartnerWithUsPage() {
       </section>
 
       {/* Partnership Benefits Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>PARTNERSHIP BENEFITS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
@@ -3493,28 +2233,7 @@ function PartnerWithUsPage() {
                 </div>
               </div>
             </div>
-            <div style={{ background: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-              <h4 style={{ fontSize: '24px', fontWeight: 'bold', color: '#701C45', marginBottom: '24px' }}>Request Partnership</h4>
-              <div style={{ marginBottom: '20px' }}>
-                <input type="text" placeholder="Organization Name" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <input type="email" placeholder="Contact Email" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <select style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box' }}>
-                  <option>Partnership Type</option>
-                  <option>Healthcare Institution</option>
-                  <option>Government Agency</option>
-                  <option>Technology Partner</option>
-                  <option>NGO/Non-Profit</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <textarea placeholder="Partnership Goals & Requirements" rows="4" style={{ width: '100%', padding: '12px 16px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px', boxSizing: 'border-box', resize: 'vertical' }} />
-              </div>
-              <button style={{ background: '#701C45', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', width: '100%' }}>Submit Partnership Request</button>
-            </div>
+            <EnhancedPartnershipForm />
           </div>
         </div>
       </section>
@@ -3522,7 +2241,7 @@ function PartnerWithUsPage() {
   )
 }
 
-function APIIntegrationPage() {
+function APIIntegrationPage({ setCurrentPage }) {
   return (
     <div>
       <section style={{ 
@@ -3534,21 +2253,23 @@ function APIIntegrationPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                API INTEGRATION
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Integrate LIFE DROP's API with your hospital management system for seamless blood request processing.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  API INTEGRATION
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Integrate LIFE DROP's API with your hospital management system for seamless blood request processing.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3564,7 +2285,7 @@ function APIIntegrationPage() {
       </section>
 
       {/* API Features Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>COMPREHENSIVE API SOLUTIONS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
@@ -3594,7 +2315,7 @@ function APIIntegrationPage() {
       </section>
 
       {/* API Endpoints Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>KEY API ENDPOINTS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
@@ -3633,7 +2354,7 @@ function APIIntegrationPage() {
       </section>
 
       {/* Integration Guide Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', textAlign: 'center', marginBottom: '60px' }}>INTEGRATION PROCESS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '30px' }}>
@@ -3659,7 +2380,7 @@ function APIIntegrationPage() {
             </div>
           </div>
           <div style={{ textAlign: 'center', marginTop: '60px' }}>
-            <button style={{ background: '#701C45', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginRight: '20px' }}>Request API Access</button>
+            <button onClick={() => setCurrentPage('api-request')} style={{ background: '#701C45', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginRight: '20px' }}>Request API Access</button>
             <button style={{ background: 'transparent', color: '#701C45', padding: '16px 32px', borderRadius: '8px', border: '2px solid #701C45', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>View Documentation</button>
           </div>
         </div>
@@ -3682,21 +2403,23 @@ function PrivacyPolicyPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                PRIVACY POLICY
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                Your privacy is important to us. Learn how we collect, use, and protect your information on LIFE DROP.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  PRIVACY POLICY
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  Your privacy is important to us. Learn how we collect, use, and protect your information on LIFE DROP.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3712,7 +2435,7 @@ function PrivacyPolicyPage() {
       </section>
 
       {/* Privacy Overview Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', marginBottom: '24px' }}>DATA PROTECTION COMMITMENT</h2>
@@ -3751,7 +2474,7 @@ function PrivacyPolicyPage() {
       </section>
 
       {/* Privacy Policy Content Section */}
-      <section style={{ padding: '80px 0', background: '#f5f5f5' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: '#f5f5f5' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ background: 'white', padding: '60px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
             <div style={{ marginBottom: '40px' }}>
@@ -3817,21 +2540,23 @@ function TermsOfServicePage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div>
-              <h1 style={{ 
-                fontSize: '48px', 
-                fontWeight: 'bold', 
-                color: '#701C45',
-                marginBottom: '24px'
-              }}>
-                TERMS OF SERVICE
-              </h1>
-              <p style={{ 
-                fontSize: '18px', 
-                color: '#666', 
-                lineHeight: '1.6'
-              }}>
-                These terms govern your use of the LIFE DROP platform and services. Read our guidelines and policies.
-              </p>
+              <div className="slide-in-left">
+                <h1 style={{ 
+                  fontSize: '48px', 
+                  fontWeight: 'bold', 
+                  color: '#701C45',
+                  marginBottom: '24px'
+                }}>
+                  TERMS OF SERVICE
+                </h1>
+                <p style={{ 
+                  fontSize: '18px', 
+                  color: '#666', 
+                  lineHeight: '1.6'
+                }}>
+                  These terms govern your use of the LIFE DROP platform and services. Read our guidelines and policies.
+                </p>
+              </div>
             </div>
             <div style={{ 
               width: '100%',
@@ -3847,7 +2572,7 @@ function TermsOfServicePage() {
       </section>
 
       {/* Terms Overview Section */}
-      <section style={{ padding: '80px 0', background: 'white' }}>
+      <section className="animate-on-scroll" style={{ padding: '80px 0', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#701C45', marginBottom: '24px' }}>SERVICE AGREEMENT</h2>
