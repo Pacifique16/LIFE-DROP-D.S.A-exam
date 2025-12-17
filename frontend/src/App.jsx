@@ -6,6 +6,10 @@ import APIRequestForm from './APIRequestForm.jsx'
 import EnhancedContactForm from './EnhancedContactForm.jsx'
 import EnhancedPartnershipForm from './EnhancedPartnershipForm.jsx'
 import EnhancedEventPartnershipForm from './EnhancedEventPartnershipForm.jsx'
+import LoginForm from './LoginForm.jsx'
+import AdminDashboard from './AdminDashboard.jsx'
+import DonorDashboard from './DonorDashboard.jsx'
+import HospitalDashboard from './HospitalDashboard.jsx'
 
 // Animation styles
 const animations = `
@@ -140,6 +144,23 @@ import donatingImage from './assets/donating.jpg'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userType, setUserType] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+
+  const handleLogin = (type, email) => {
+    setIsLoggedIn(true)
+    setUserType(type)
+    setUserEmail(email)
+    setCurrentPage('dashboard')
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setUserType('')
+    setUserEmail('')
+    setCurrentPage('home')
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -163,8 +184,21 @@ function App() {
   }, [currentPage])
 
   const renderPage = () => {
+    if (currentPage === 'login') {
+      return <LoginForm onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+    }
+    
+    if (isLoggedIn && currentPage === 'dashboard') {
+      switch(userType) {
+        case 'admin': return <AdminDashboard userEmail={userEmail} onLogout={handleLogout} />
+        case 'donor': return <DonorDashboard userEmail={userEmail} onLogout={handleLogout} />
+        case 'hospital': return <HospitalDashboard userEmail={userEmail} onLogout={handleLogout} />
+        default: return <HomePage setCurrentPage={setCurrentPage} />
+      }
+    }
+    
     switch(currentPage) {
-      case 'about': return <AboutPage />
+      case 'about': return <AboutPage setCurrentPage={setCurrentPage} />
       case 'impact': return <ImpactPage />
       case 'contact': return <ContactPage />
       case 'register': return <RegistrationForm />
@@ -204,10 +238,10 @@ function App() {
         }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <button onClick={() => setCurrentPage('contact')} style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'none', fontSize: '14px', cursor: 'pointer' }}>Support</button>
-            <a href="#" style={{ color: '#666', textDecoration: 'none', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button onClick={() => setCurrentPage(isLoggedIn ? 'dashboard' : 'login')} style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'none', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
               <img src={logoutIcon} alt="Login" style={{ width: '16px', height: '16px' }} />
-              Login
-            </a>
+              {isLoggedIn ? `${userType.charAt(0).toUpperCase() + userType.slice(1)} Dashboard` : 'Login'}
+            </button>
             <button onClick={() => setCurrentPage('contact')} style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'none', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
               <img src={phoneCallIcon} alt="Contact" style={{ width: '16px', height: '16px' }} />
               Contact
@@ -216,7 +250,8 @@ function App() {
         </div>
       </div>
       
-      {/* Header */}
+      {/* Header - Only show if not logged in or not on dashboard */}
+      {(!isLoggedIn || currentPage !== 'dashboard') && (
       <header className="glass-effect" style={{ 
         background: 'rgba(112, 28, 69, 0.95)',
         padding: '20px 0',
@@ -287,12 +322,14 @@ function App() {
           </nav>
         </div>
       </header>
+      )}
       
       <main>
         {renderPage()}
       </main>
       
-      {/* Footer */}
+      {/* Footer - Only show if not logged in or not on dashboard */}
+      {(!isLoggedIn || currentPage !== 'dashboard') && (
       <footer className="gradient-bg" style={{ 
         color: 'white',
         padding: '60px 0 30px',
@@ -377,6 +414,7 @@ function App() {
           </div>
         </div>
       </footer>
+      )}
     </div>
   )
 }
@@ -898,7 +936,7 @@ function HomePage({ setCurrentPage }) {
 
 
 
-function AboutPage() {
+function AboutPage({ setCurrentPage }) {
 
   return (
     <div>
@@ -940,16 +978,18 @@ function AboutPage() {
                 }}>
                   Our aim is simple; to save lives by improving the availability and safety of blood across East Africa through our digital platform that connects hospitals with verified donors.
                 </p>
-                <button style={{ 
-                  background: '#701C45',
-                  color: 'white', 
-                  padding: '16px 32px', 
-                  borderRadius: '25px', 
-                  border: 'none', 
-                  fontSize: '16px', 
-                  fontWeight: 'bold',
-                  cursor: 'pointer'
-                }}>
+                <button 
+                  onClick={() => setCurrentPage('register')}
+                  style={{ 
+                    background: '#701C45',
+                    color: 'white', 
+                    padding: '16px 32px', 
+                    borderRadius: '25px', 
+                    border: 'none', 
+                    fontSize: '16px', 
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}>
                   Join Our Network
                 </button>
               </div>
